@@ -26,7 +26,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: 22
         script: |
-          cd ~/home/sammy/apps/node1
+          cd ~/apps/node1
           git pull origin master || git clone https://github.com/jayanti-prajapati/sample-nodejs-app.git .
           git status
           npm install --only=prod
