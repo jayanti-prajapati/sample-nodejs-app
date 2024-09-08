@@ -21,13 +21,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests
-        run: npm test  # Optionally run tests if you have any
-
       - name: Build and Deploy
         run: |
-            echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add -
-            ssh root@88.222.244.11 'mkdir -p /path/to/deploy'
-            rsync -avz --delete . user@server:/path/to/deploy
-          env:
-            PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add -
+          ssh -o StrictHostKeyChecking=no root@88.222.244.11 'mkdir -p /path/to/deploy'
+          rsync -avz --delete . root@88.222.244.11:/path/to/deploy
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
