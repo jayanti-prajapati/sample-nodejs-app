@@ -1,21 +1,33 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: Node.js CI
 
 on:
-  pull_request:
-    branches: [ master ]
+  push:
+    branches:
+      - master  # or main, depending on your branch name
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 12
-      uses: actions/setup-node@v2
-      with:
-        node-version: 12.x
-    - run: npm i
-    - run: npm run build --if-present
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Use the Node.js version you need
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test  # Optionally run tests if you have any
+
+      - name: Build and Deploy
+        run: |
+            echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add -
+            ssh root@88.222.244.11 'mkdir -p /path/to/deploy'
+            rsync -avz --delete . user@server:/path/to/deploy
+          env:
+            PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
